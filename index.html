@@ -296,10 +296,6 @@
     <p class="status-message">Processing... (This takes approximately 60 seconds)</p>
   </div>
 
-  <footer>
-    <p>Extension Killer &copy; 2025</p>
-  </footer>
-
   <script>
     const extensions = {
       "Securly (3rd ID)": "chrome-extension://ckecmkbnoanpgplccmnoikfmpcdladkc/fonts/Metropolis.css",
@@ -351,13 +347,17 @@
     });
 
     async function checkExtensionURL(url) {
-      try {
-        const response = await fetch(url);
-        return response.ok;
-      } catch (error) {
-        return false;
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            return true;
+          } else {
+            return false;
+          }
+        } catch (error) {
+          return false;
+        }
       }
-    }
 
     async function populateExtensionDropdown() {
       let foundExtensions = false;
