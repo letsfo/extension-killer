@@ -257,33 +257,32 @@
   <header>
     <div class="header-content">
       <i class="fas fa-sliders logo-icon"></i>
-      <h1>Extension Killer</h1>
+      <h1>Random Word Generator</h1>
     </div>
   </header>
 
   <main>
     <div class="container">
       <p class="info-text">
-        Extension Killer disables extensions by spamming iframes with the extension's resources.
+        This random word generator generates thousands of random words in less than a minute.
       </p>
 
       <div class="selection-area">
-        <label for="extensionSelect">Select extension to manage:</label>
+        <label for="extensionSelect">Select word style:</label>
         <select id="extensionSelect" class="dropdown"></select>
       </div>
 
       <div class="slider-area">
         <label for="resourceIntensity">
-          Adjust the number of iframe popups to generate below.
+          Adjust the number of words to generate below.
         </label>
         <div class="slider-container">
           <input type="number" id="resourceIntensity" min="100" max="15000" value="2000" step="100">
-          <span id="resourceValue" class="resource-value">2000</span>
         </div>
       </div>
 
       <div class="button-area">
-        <button id="hangButton"><i class="fas fa-pause-circle"></i> Suspend Extension</button>
+        <button id="hangButton"><i class="fas fa-arrow-right"></i> Start Process</button>
         <button id="killButton"><i class="fas fa-power-off"></i> Finalize Process</button>
       </div>
 
@@ -411,7 +410,7 @@
       const resourceCount = parseInt(intensitySlider.value);
 
       if (!selectedUrl) {
-        alert('Please select an extension first.');
+        alert('Please select a word style first.');
         return;
       }
 
@@ -461,9 +460,7 @@
 
       statusText.innerHTML = `
         <div class="completion-text">
-          Keep this tab open. Please open <strong>chrome://extensions</strong>, select your extension,
-          and spam the "Allow access to file URLs" switch. The extension has been successfully managed! 
-          You can now close that tab as well as this one.
+          Words have been generated! 
         </div>
       `;
 
