@@ -75,7 +75,8 @@
     }
 
     .selection-area,
-    .slider-area {
+    .slider-area,
+    .search-area {
       margin-bottom: 1.5rem;
     }
 
@@ -112,6 +113,11 @@
       background-color: var(--background);
       color: var(--text);
       outline: none;
+    }
+
+    .search-input {
+      width: 100%;
+      margin-top: 0.5rem;
     }
 
     .resource-value {
@@ -159,6 +165,16 @@
       transform: translateY(-2px);
     }
 
+    #searchButton {
+      background-color: var(--green);
+      color: var(--background);
+    }
+
+    #searchButton:hover {
+      background-color: #b6f3b1;
+      transform: translateY(-2px);
+    }
+
     .overlay {
       position: fixed;
       top: 0;
@@ -202,6 +218,19 @@
       border-radius: 8px;
       border-left: 4px solid var(--green);
       display: none;
+    }
+
+    .completion-text {
+      margin-bottom: 1.5rem;
+    }
+
+    .history-note {
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background-color: var(--surface);
+      border-radius: 6px;
+      border-left: 4px solid var(--yellow);
+      font-size: 0.9rem;
     }
 
     footer {
@@ -317,6 +346,31 @@
       intensityValue.textContent = this.value;
     });
 
+    function handleSearch() {
+      const searchInput = document.getElementById('searchInput');
+      const input = searchInput.value.trim();
+
+      if (!input) return;
+
+      let url;
+
+      const domainRegex = /\.[a-z]{2,}$/i;
+      if (domainRegex.test(input)) {
+
+        url = input.startsWith('http://') || input.startsWith('https://')
+          ? input
+          : 'https://' + input;
+      } else {
+
+        url = 'https://google.com/search?q=' + encodeURIComponent(input);
+      }
+
+      const popup = window.open(url, '_blank', 'width=800,height=600');
+      if (!popup) {
+        alert('Popup blocked. Please allow popups for this site and try again.');
+      }
+    }
+
     async function populateExtensionDropdown() {
       let foundExtensions = false;
 
@@ -417,12 +471,39 @@
       );
 
       killButton.style.display = 'none';
+
       statusText.innerHTML = `
-        Keep this tab open. Please open <strong>chrome:
-        and toggle "Allow access to file URLs" switch twice. The extension has been successfully managed! 
-        You can now close that tab as well as this one. To restore normal extension functionality, 
-        toggle the "Allow access to file URLs" switch again.
+        <div class="completion-text">
+          Keep this tab open. Please open <strong>chrome:
+          and toggle "Allow access to file URLs" switch twice. The extension has been successfully managed! 
+          You can now close that tab as well as this one. To restore normal extension functionality, 
+          toggle the "Allow access to file URLs" switch again.
+        </div>
+
+        <div class="history-note">
+          <i class="fas fa-info-circle"></i> <strong>Privacy Benefit:</strong> This method leaves no trace in your browsing history, 
+          as it uses temporary iframes that are immediately removed. The extension is disabled without installing any additional software.
+        </div>
+
+        <div class="search-area" style="margin-top: 2rem;">
+          <label for="searchInput">Search or navigate:</label>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search or type a URL">
+          <div class="button-area" style="margin-top: 0.8rem;">
+            <button id="searchButton" onclick="handleSearch()"><i class="fas fa-search"></i> Go</button>
+          </div>
+        </div>
       `;
+
+      setTimeout(() => {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+              handleSearch();
+            }
+          });
+        }
+      }, 100);
 
       window.location.href = selectedUrl;
     }
