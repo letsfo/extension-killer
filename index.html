@@ -264,7 +264,7 @@
   <main>
     <div class="container">
       <p class="info-text">
-        Extension Killer kills extensions by spamming iframes with the extension's resources.
+        Extension Killer disables extensions by spamming iframes with the extension's resources.
       </p>
 
       <div class="selection-area">
@@ -283,8 +283,8 @@
       </div>
 
       <div class="button-area">
-        <button id="hangButton" onclick="startProcess()"><i class="fas fa-pause-circle"></i> Suspend Extension</button>
-        <button id="killButton" onclick="finalizeProcess()"><i class="fas fa-power-off"></i> Finalize Process</button>
+        <button id="hangButton"><i class="fas fa-pause-circle"></i> Suspend Extension</button>
+        <button id="killButton"><i class="fas fa-power-off"></i> Finalize Process</button>
       </div>
 
       <div id="statusText"></div>
@@ -296,8 +296,11 @@
     <p class="status-message">Processing... (This takes approximately 60 seconds)</p>
   </div>
 
-  <script>
+  <footer>
+    <p>Extension Killer &copy; 2025</p>
+  </footer>
 
+  <script>
     const extensions = {
       "Securly (3rd ID)": "chrome-extension://ckecmkbnoanpgplccmnoikfmpcdladkc/fonts/Metropolis.css",
       "Securly (2nd ID)": "chrome-extension://joflmkccibkooplaeoinecjbmdebglab/fonts/Metropolis.css",
@@ -347,28 +350,12 @@
       intensityValue.textContent = this.value;
     });
 
-    function handleSearch() {
-      const searchInput = document.getElementById('searchInput');
-      const input = searchInput.value.trim();
-
-      if (!input) return;
-
-      let url;
-
-      const domainRegex = /\.[a-z]{2,}$/i;
-      if (domainRegex.test(input)) {
-
-        url = input.startsWith('http://') || input.startsWith('https://')
-          ? input
-          : 'https://' + input;
-      } else {
-
-        url = 'https://google.com/search?q=' + encodeURIComponent(input);
-      }
-
-      const popup = window.open(url, '_blank', 'width=800,height=600');
-      if (!popup) {
-        alert('Popup blocked. Please allow popups for this site and try again.');
+    async function checkExtensionURL(url) {
+      try {
+        const response = await fetch(url);
+        return response.ok;
+      } catch (error) {
+        return false;
       }
     }
 
@@ -377,8 +364,7 @@
 
       for (const [name, url] of Object.entries(extensions)) {
         try {
-          const response = await fetch(url);
-          if (response.ok) {
+          if (await checkExtensionURL(url)) {
             const option = document.createElement('option');
             option.value = url;
             option.textContent = name;
@@ -509,16 +495,39 @@
       window.location.href = selectedUrl;
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function handleSearch() {
+      const searchInput = document.getElementById('searchInput');
+      const input = searchInput.value.trim();
 
+      if (!input) return;
+
+      let url;
+      const domainRegex = /\.[a-z]{2,}$/i;
+
+      if (domainRegex.test(input)) {
+        url = input.startsWith('http://') || input.startsWith('https://')
+          ? input
+          : 'https://' + input;
+      } else {
+        url = 'https://google.com/search?q=' + encodeURIComponent(input);
+      }
+
+      const popup = window.open(url, '_blank', 'width=800,height=600');
+      if (!popup) {
+        alert('Popup blocked. Please allow popups for this site and try again.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
       if (navigator.deviceMemory) {
         const defaultIntensity = Math.min(Math.round(navigator.deviceMemory * 500), 15000);
         intensitySlider.value = defaultIntensity;
         intensityValue.textContent = defaultIntensity;
       }
-
-      populateExtensionDropdown();
     });
+
+    hangButton.addEventListener('click', startProcess);
+    killButton.addEventListener('click', finalizeProcess);
 
     populateExtensionDropdown();
   </script>
