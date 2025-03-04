@@ -461,23 +461,9 @@
 
       statusText.innerHTML = `
         <div class="completion-text">
-          Keep this tab open. Please open <strong>chrome:
-          and toggle "Allow access to file URLs" switch twice. The extension has been successfully managed! 
-          You can now close that tab as well as this one. To restore normal extension functionality, 
-          toggle the "Allow access to file URLs" switch again.
-        </div>
-
-        <div class="history-note">
-          <i class="fas fa-info-circle"></i> <strong>Privacy Benefit:</strong> This method leaves no trace in your browsing history, 
-          as it uses temporary iframes that are immediately removed. The extension is disabled without installing any additional software.
-        </div>
-
-        <div class="search-area" style="margin-top: 2rem;">
-          <label for="searchInput">Search or navigate:</label>
-          <input type="text" id="searchInput" class="search-input" placeholder="Search or type a URL">
-          <div class="button-area" style="margin-top: 0.8rem;">
-            <button id="searchButton" onclick="handleSearch()"><i class="fas fa-search"></i> Go</button>
-          </div>
+          Keep this tab open. Please open <strong>chrome://extensions</strong>, select your extension,
+          and spam the "Allow access to file URLs" switch. The extension has been successfully managed! 
+          You can now close that tab as well as this one.
         </div>
       `;
 
